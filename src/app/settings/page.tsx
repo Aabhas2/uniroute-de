@@ -157,15 +157,28 @@ export default function SettingsPage() {
   }
 
   const handleExportData = () => {
-    const data = { settings, tasks: JSON.parse(localStorage.getItem('tasks') || '[]') }
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+    const allData = {
+      exportedAt: new Date().toISOString(),
+      app: 'UniRoute DE',
+      version: '2.0.0',
+      settings,
+      tasks:        JSON.parse(localStorage.getItem('tasks')        || '[]'),
+      universities: JSON.parse(localStorage.getItem('universities') || '[]'),
+      exams:        JSON.parse(localStorage.getItem('exams')        || '[]'),
+      scholarships: JSON.parse(localStorage.getItem('scholarships') || '[]'),
+      financeItems: JSON.parse(localStorage.getItem('financeItems') || '[]'),
+      notes:        JSON.parse(localStorage.getItem('notes')        || '[]'),
+      housing:      JSON.parse(localStorage.getItem('housing')      || '[]'),
+      visaSteps:    JSON.parse(localStorage.getItem('visaSteps')   || '[]'),
+    }
+    const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'prep-hub-data.json'
+    a.download = 'uniroute-de-data.json'
     a.click()
     URL.revokeObjectURL(url)
-    toast.success('Data exported successfully')
+    toast.success('All data exported successfully')
   }
 
   const handleClearData = () => {
@@ -227,6 +240,21 @@ export default function SettingsPage() {
           <input id="s-email" type="email" value={settings.personalDetails.email}
             onChange={e => handlePersonalChange('email', e.target.value)}
             placeholder="you@example.com" className="input-field" />
+        </div>
+
+        <div className="input-group">
+          <label className="input-label" htmlFor="s-country">Target Country</label>
+          <select id="s-country" value={settings.personalDetails.targetCountry}
+            onChange={e => handlePersonalChange('targetCountry', e.target.value)}
+            className="input-field">
+            <option value="Germany">🇩🇪 Germany</option>
+            <option value="Canada">🇨🇦 Canada</option>
+            <option value="Netherlands">🇳🇱 Netherlands</option>
+            <option value="Switzerland">🇨🇭 Switzerland</option>
+            <option value="Austria">🇦🇹 Austria</option>
+            <option value="UK">🇬🇧 United Kingdom</option>
+            <option value="Australia">🇦🇺 Australia</option>
+          </select>
         </div>
 
         <div className="input-group">
@@ -506,23 +534,28 @@ export default function SettingsPage() {
   )
 
   const renderNotifications = () => (
-    <div className="space-y-0 divide-y divide-border">
-      {[
-        { key: 'deadlineReminders', label: 'Deadline Reminders', desc: 'Get notified about upcoming deadlines' },
-        { key: 'taskUpdates',       label: 'Task Updates',       desc: 'Notifications when tasks are updated' },
-        { key: 'emailNotifications',label: 'Email Notifications',desc: 'Receive important updates via email' },
-      ].map(({ key, label, desc }) => (
-        <div key={key} className="setting-row">
-          <div>
-            <p className="setting-label">{label}</p>
-            <p className="setting-description">{desc}</p>
+    <div className="space-y-4">
+      <div className="p-3 bg-warning/10 border border-warning/20 rounded-lg">
+        <p className="text-xs text-warning font-medium">🚧 Push & email notifications are coming in a future update. These settings are saved but not yet active.</p>
+      </div>
+      <div className="space-y-0 divide-y divide-border">
+        {[
+          { key: 'deadlineReminders', label: 'Deadline Reminders',  desc: 'Get notified about upcoming deadlines (coming soon)' },
+          { key: 'taskUpdates',       label: 'Task Updates',        desc: 'Notifications when tasks are updated (coming soon)' },
+          { key: 'emailNotifications',label: 'Email Notifications', desc: 'Receive important updates via email (coming soon)' },
+        ].map(({ key, label, desc }) => (
+          <div key={key} className="setting-row">
+            <div>
+              <p className="setting-label">{label}</p>
+              <p className="setting-description">{desc}</p>
+            </div>
+            <Toggle
+              checked={(settings.notifications as any)[key]}
+              onChange={() => set('notifications', key, !(settings.notifications as any)[key])}
+            />
           </div>
-          <Toggle
-            checked={(settings.notifications as any)[key]}
-            onChange={() => set('notifications', key, !(settings.notifications as any)[key])}
-          />
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 
@@ -589,10 +622,10 @@ export default function SettingsPage() {
         <p className="pt-2">Built with <strong className="text-foreground">Next.js 15</strong> · <strong className="text-foreground">TypeScript</strong> · <strong className="text-foreground">Tailwind CSS</strong> · <strong className="text-foreground">Firebase</strong></p>
         <div className="pt-3 grid grid-cols-2 gap-2">
           {[
-            { label: 'Framework', value: 'Next.js 15' },
+          { label: 'Framework', value: 'Next.js 15' },
             { label: 'Database', value: 'Cloud Firestore' },
             { label: 'Auth', value: 'Firebase Auth' },
-            { label: 'Hosting', value: 'Vercel (planned)' },
+            { label: 'Hosting', value: 'Vercel' },
           ].map(({ label, value }) => (
             <div key={label} className="flex flex-col gap-0.5 p-3 bg-muted/40 rounded-lg">
               <span className="text-xs text-muted-foreground">{label}</span>

@@ -71,14 +71,28 @@ interface PrepRoadmapProps {
 
 export function PrepRoadmap({ tasks }: PrepRoadmapProps) {
   const phases = useMemo(() => {
-    return GERMANY_PHASES.map(phase => {
-      const related = tasks.filter(t =>
-        phase.keywords.some(kw =>
+    // Assign each task to exactly ONE phase (first match wins) to prevent double-counting.
+    // Priority order: category match first, then title/description keyword match.
+    const assigned = new Set<string>()
+
+    const phaseTaskMap = GERMANY_PHASES.map(phase => {
+      const related = tasks.filter(t => {
+        if (assigned.has(t.id)) return false
+        const catMatch = phase.keywords.some(kw => t.category.toLowerCase().includes(kw))
+        const textMatch = phase.keywords.some(kw =>
           t.title.toLowerCase().includes(kw) ||
-          (t.description?.toLowerCase().includes(kw) ?? false) ||
-          t.category.toLowerCase().includes(kw)
+          (t.description?.toLowerCase().includes(kw) ?? false)
         )
-      )
+        if (catMatch || textMatch) {
+          assigned.add(t.id)
+          return true
+        }
+        return false
+      })
+      return { phase, related }
+    })
+
+    return phaseTaskMap.map(({ phase, related }) => {
       const completed = related.filter(t => t.status === 'Completed').length
       const inProgress = related.filter(t => t.status === 'In Progress').length
       const total = related.length
@@ -142,7 +156,7 @@ export function PrepRoadmap({ tasks }: PrepRoadmapProps) {
                           'h-full rounded-full transition-all',
                           phase.status === 'done' ? 'bg-success' : 'bg-primary'
                         )}
-                        style={{ width: `${Math.max(phase.pct, phase.inProgress > 0 ? 35 : 0)}%` }}
+                        style={{ width: `${phase.pct}%` }}
                       />
                     </div>
                     <span className="text-xs text-muted-foreground shrink-0 font-medium">

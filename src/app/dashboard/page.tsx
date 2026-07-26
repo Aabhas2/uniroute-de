@@ -69,25 +69,25 @@ export default function Dashboard() {
         const savedExams = localStorage.getItem('exams')
         const savedFinance = localStorage.getItem('financeItems')
 
-        const sanitizeTitle = (t: string) => t.replace(/Austrian/gi, 'German')
-
         setTasks(savedTasks
           ? JSON.parse(savedTasks).map((t: any) => ({
               ...t,
-              title: sanitizeTitle(t.title),
-              description: t.description ? sanitizeTitle(t.description) : '',
               dueDate: t.dueDate ? new Date(t.dueDate) : undefined,
               createdAt: new Date(t.createdAt ?? Date.now())
             }))
           : mockTasks)
         setUniversities(savedUnis
-          ? JSON.parse(savedUnis).map((u: any) => ({ ...u, applicationDeadline: new Date(u.applicationDeadline) }))
+          ? JSON.parse(savedUnis).map((u: any) => ({
+              ...u,
+              applicationDeadline: u.applicationDeadline ? new Date(u.applicationDeadline) : undefined
+            }))
           : mockUniversities)
         setExams(savedExams
           ? JSON.parse(savedExams).map((e: any) => ({ ...e, plannedDate: e.plannedDate ? new Date(e.plannedDate) : undefined }))
           : mockExams)
         setFinanceItems(savedFinance ? JSON.parse(savedFinance) : mockFinanceItems)
       } catch {
+
         setTasks(mockTasks); setUniversities(mockUniversities); setExams(mockExams); setFinanceItems(mockFinanceItems)
       }
     }
@@ -211,14 +211,23 @@ export default function Dashboard() {
           <div className="relative">
             <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-1">UniRoute DE Workspace</p>
             <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1.5">
-              Welcome{settings.personalDetails.name ? `, ${settings.personalDetails.name.split(' ')[0]}` : ''}! 👋
+              {settings.personalDetails.name
+                ? `Welcome, ${settings.personalDetails.name.split(' ')[0]}! 👋`
+                : 'Welcome to UniRoute DE! 👋'}
             </h1>
             <p className="text-muted-foreground text-sm">
-              Germany study preparation · {stats.pct}% complete · {stats.done} of {stats.total} tasks done
+              {settings.personalDetails.targetCountry || 'Germany'} study preparation
+              &nbsp;·&nbsp;{stats.pct}% complete
+              &nbsp;·&nbsp;{stats.done} of {stats.total} tasks done
             </p>
             <div className="mt-4 max-w-sm">
               <ProgressBar value={stats.pct} showPercentage={false} />
             </div>
+            {!settings.personalDetails.name && (
+              <p className="text-xs text-muted-foreground mt-2">
+                💡 <a href="/settings" className="underline hover:text-foreground transition-colors">Set your name in Settings</a> to personalise your dashboard.
+              </p>
+            )}
           </div>
           <div className="absolute bottom-4 right-6 text-4xl pointer-events-none opacity-30 select-none">
             🇩🇪
@@ -278,10 +287,10 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Deadline Timeline */}
+          {/* Deadline Calendar */}
           <Card className="xl:col-span-3">
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Upcoming Deadlines</CardTitle>
+              <CardTitle>Deadline Calendar</CardTitle>
               {stats.upcomingCount > 0 && (
                 <span className="text-xs text-muted-foreground font-medium">
                   Next {Math.min(stats.upcomingCount, 8)}

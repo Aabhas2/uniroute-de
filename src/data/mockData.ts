@@ -193,14 +193,22 @@ export const mockVisaSteps: VisaStep[] = [
   }
 ]
 
+// Returns the next upcoming annual occurrence of month/day (e.g. next Nov 15)
+const nextAnnualDeadline = (month: number, day: number): Date => {
+  const now = new Date()
+  const thisYear = new Date(now.getFullYear(), month, day)
+  // If it hasn't passed yet this year, use this year; otherwise use next year
+  return thisYear > now ? thisYear : new Date(now.getFullYear() + 1, month, day)
+}
+
 export const germanScholarshipsDB: Scholarship[] = [
   {
     id: 'db-daad-1',
-    name: 'DAAD Study Scholarships - Master Studies for All Academic Disciplines',
+    name: 'DAAD Study Scholarships — Master Studies for All Academic Disciplines',
     amount: 934,
     currency: 'EUR',
     eligibility: 'Excellent academic record, bachelor degree (max 6 years old)',
-    deadline: new Date(new Date().getFullYear(), 10, 15), // roughly Nov 15
+    deadline: nextAnnualDeadline(10, 15), // Nov 15 each year
     status: 'To Apply',
     website: 'https://www2.daad.de/deutschland/stipendium/datenbank/en/21148-scholarship-database/',
     requirements: ['SOP (Letter of Motivation)', 'LOR from University Professor', 'Language Certificate']
@@ -211,7 +219,7 @@ export const germanScholarshipsDB: Scholarship[] = [
     amount: 300,
     currency: 'EUR',
     eligibility: 'Enrolled students at a German university with outstanding academic achievements',
-    deadline: new Date(new Date().getFullYear(), 5, 30), // Varies, but usually Summer
+    deadline: nextAnnualDeadline(5, 30), // ~Jun 30 each year (varies per university)
     status: 'To Apply',
     website: 'https://www.deutschlandstipendium.de/deutschlandstipendium/de/services/english/the-deutschlandstipendium-making-a-great-idea-happen.html',
     requirements: ['Enrolled at participating university', 'Transcript of Records', 'CV']
@@ -222,7 +230,7 @@ export const germanScholarshipsDB: Scholarship[] = [
     amount: 934,
     currency: 'EUR',
     eligibility: 'All subjects, must have excellent German language skills (B2/C1)',
-    deadline: new Date(new Date().getFullYear(), 2, 1), // March 1
+    deadline: nextAnnualDeadline(2, 1), // Mar 1 each year
     status: 'To Apply',
     website: 'https://www.boell.de/en/scholarships',
     requirements: ['Proof of German proficiency (B2+)', 'Excellent academic record', 'Social/political engagement']
@@ -233,12 +241,13 @@ export const germanScholarshipsDB: Scholarship[] = [
     amount: 934,
     currency: 'EUR',
     eligibility: 'International students studying in Germany with social/political involvement',
-    deadline: new Date(new Date().getFullYear(), 4, 30), // varying deadlines
+    deadline: nextAnnualDeadline(4, 30), // ~May 30 each year
     status: 'To Apply',
     website: 'https://www.fes.de/studienfoerderung/bewerbung',
     requirements: ['Social/Political engagement', 'German C1 level', 'Reference from university teacher']
   }
 ]
+
 
 export const mockTasks: Task[] = [
   {

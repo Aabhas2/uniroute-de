@@ -70,11 +70,12 @@ export default function ExamsPage() {
     }
   }, [exams, mounted, user])
 
-  const getStatusVariant = (status: Exam['status']) => {
+  const getStatusVariant = (status: Exam['status']): 'success' | 'info' | 'warning' | 'default' => {
     switch (status) {
       case 'Completed': return 'success'
       case 'Registered': return 'info'
       case 'To Register': return 'warning'
+      default: return 'default'
     }
   }
 
@@ -279,17 +280,23 @@ export default function ExamsPage() {
           </div>
           <div className="flex space-x-2">
             {exam.registrationLink && exam.status === 'To Register' && (
-              <Button 
-                variant="primary" 
-                size="sm"
-                onClick={() => {
-                  handleOpenRegistration(exam.registrationLink!)
-                  handleMarkRegistered(exam.id)
-                }}
-              >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Register
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleOpenRegistration(exam.registrationLink!)}
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Open Registration
+                </Button>
+                <Button 
+                  variant="primary" 
+                  size="sm"
+                  onClick={() => handleMarkRegistered(exam.id)}
+                >
+                  Mark Registered
+                </Button>
+              </div>
             )}
             {exam.status === 'Registered' && (
               <Button 

@@ -167,13 +167,14 @@ export default function LoginPage() {
           {/* Mobile logo + back link */}
           <div className="flex items-center justify-between">
             <div className="lg:hidden flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <GraduationCap className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-base font-bold text-foreground">UniRoute DE</p>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Study Abroad</p>
-              </div>
+              <Image
+                src="/uni_transparentbg.png"
+                alt="UniRoute DE"
+                width={160}
+                height={50}
+                className="h-10 w-auto object-contain"
+                priority
+              />
             </div>
             <Link href="/" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors ml-auto">
               <ArrowLeft className="h-3.5 w-3.5" />

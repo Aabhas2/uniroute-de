@@ -41,7 +41,7 @@ export default function UniversitiesPage() {
         const parsedUniversities = savedUniversities
           ? JSON.parse(savedUniversities).map((uni: any) => ({
               ...uni,
-              applicationDeadline: uni.applicationDeadline ? new Date(uni.applicationDeadline) : new Date()
+              applicationDeadline: uni.applicationDeadline ? new Date(uni.applicationDeadline) : undefined
             }))
           : mockUniversities
         setUniversities(parsedUniversities)

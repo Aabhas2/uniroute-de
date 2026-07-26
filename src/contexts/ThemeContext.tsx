@@ -7,6 +7,11 @@ import { Settings } from '@/types'
 
 
 
+// Bump this version string whenever mock data structure changes significantly.
+// Returning guests with an older version will have their localStorage cleared
+// so they see fresh data instead of forever-stale 2024 dates.
+const DATA_VERSION = '2.0.0'
+
 export const defaultSettings: Settings = {
   theme: 'system',
   personalDetails: {
@@ -95,6 +100,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setMounted(true)
 
     try {
+      // ── Version migration: clear stale guest data ──────────────────────
+      const storedVersion = localStorage.getItem('data_version')
+      if (storedVersion !== DATA_VERSION) {
+        // Clear all app data keys (but keep Firebase-related items)
+        const keysToRemove = ['tasks', 'universities', 'exams', 'scholarships',
+          'visaSteps', 'notes', 'finance', 'housing', 'savingsGoals', 'settings']
+        keysToRemove.forEach(k => localStorage.removeItem(k))
+        localStorage.setItem('data_version', DATA_VERSION)
+        // Don't load stale settings — use defaults
+        return
+      }
+
       const savedSettings = localStorage.getItem('settings')
       if (savedSettings) {
         const parsed = JSON.parse(savedSettings)
@@ -111,11 +128,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         setSettings(prev => ({
           ...prev,
           ...parsed,
-          personalDetails: { ...prev.personalDetails, ...(parsed.personalDetails ?? {}), targetCountry: 'Germany' },
+          personalDetails: { ...prev.personalDetails, ...(parsed.personalDetails ?? {}) },
           currency:        {
             ...prev.currency,
             ...(parsed.currency ?? {}),
-            // Always use corrected rates — stale localStorage values must not win
             exchangeRates: correctedRates,
           },
           dashboard:       { ...prev.dashboard,       ...(parsed.dashboard       ?? {}) },

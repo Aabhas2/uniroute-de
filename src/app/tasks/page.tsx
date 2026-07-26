@@ -40,11 +40,8 @@ export default function TasksPage() {
     } else {
       try {
         const savedTasks = localStorage.getItem('tasks')
-        const sanitizeTitle = (t: string) => t.replace(/Austrian/gi, 'German')
         const parsedTasks = savedTasks ? JSON.parse(savedTasks).map((task: any) => ({
           ...task,
-          title: sanitizeTitle(task.title),
-          description: task.description ? sanitizeTitle(task.description) : '',
           dueDate: task.dueDate ? new Date(task.dueDate) : null,
           createdAt: task.createdAt ? new Date(task.createdAt) : new Date()
         })) : mockTasks
@@ -214,6 +211,8 @@ export default function TasksPage() {
         dbTasks.update(user.uid, updated).catch(e => console.error('Status sync error:', e))
       }
       
+      // Notify dashboard and other listeners
+      window.dispatchEvent(new Event('app-data-updated'))
       return prev.map(task => task.id === id ? updated : task)
     })
   }, [user])

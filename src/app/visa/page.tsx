@@ -32,6 +32,8 @@ export default function VisaPage() {
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [stepToDelete, setStepToDelete] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [completeConfirmOpen, setCompleteConfirmOpen] = useState(false)
+  const [stepToComplete, setStepToComplete] = useState<string | null>(null)
 
   // Load data on mount / auth state change
   useEffect(() => {
@@ -78,11 +80,12 @@ export default function VisaPage() {
     }
   }
 
-  const getStatusVariant = (status: VisaStep['status']) => {
+  const getStatusVariant = (status: VisaStep['status']): 'success' | 'info' | 'warning' | 'default' => {
     switch (status) {
       case 'Completed': return 'success'
       case 'In Progress': return 'info'
       case 'Pending': return 'warning'
+      default: return 'default'
     }
   }
 
@@ -157,8 +160,14 @@ export default function VisaPage() {
     setEditingStep(undefined)
   }
 
-  const handleMarkComplete = async (stepId: string) => {
-    const matched = visaSteps.find(s => s.id === stepId)
+  const handleMarkComplete = (stepId: string) => {
+    setStepToComplete(stepId)
+    setCompleteConfirmOpen(true)
+  }
+
+  const confirmMarkComplete = async () => {
+    if (!stepToComplete) return
+    const matched = visaSteps.find(s => s.id === stepToComplete)
     if (!matched) return
 
     const updated: VisaStep = { ...matched, status: 'Completed' as VisaStep['status'] }
@@ -166,13 +175,15 @@ export default function VisaPage() {
     if (user) {
       try {
         await dbVisaSteps.update(user.uid, updated)
-        setVisaSteps(prev => prev.map(step => step.id === stepId ? updated : step))
+        setVisaSteps(prev => prev.map(step => step.id === stepToComplete ? updated : step))
       } catch (error) {
         console.error('Error completing visa step:', error)
       }
     } else {
-      setVisaSteps(prev => prev.map(step => step.id === stepId ? updated : step))
+      setVisaSteps(prev => prev.map(step => step.id === stepToComplete ? updated : step))
     }
+    setCompleteConfirmOpen(false)
+    setStepToComplete(null)
   }
 
   const handleBookAppointment = () => {
@@ -187,6 +198,16 @@ export default function VisaPage() {
   }
 
   const handleDocumentChecklist = async () => {
+    // Prevent adding duplicate checklists
+    const alreadyExists = visaSteps.some(s =>
+      s.title.toLowerCase().includes('document checklist') ||
+      s.title.toLowerCase().includes('checklist')
+    )
+    if (alreadyExists) {
+      alert('A document checklist step already exists. Edit it in the list above.')
+      return
+    }
+
     const country = settings.personalDetails.targetCountry || 'Germany'
     const config = countriesConfig[country]
     
@@ -405,7 +426,7 @@ export default function VisaPage() {
                 <ul className="text-sm text-muted-foreground space-y-1">
                   <li>• Valid passport (6+ months validity)</li>
                   <li>• University admission letter</li>
-                  <li>• Proof of financial resources (€11,208/year)</li>
+                  <li>• Proof of financial resources (€11,904/year via Blocked Account)</li>
                   <li>• Health insurance coverage</li>
                   <li>• Academic transcripts and certificates</li>
                   <li>• Language proficiency certificates</li>
@@ -476,6 +497,16 @@ export default function VisaPage() {
             onCancel={handleCancelEdit}
           />
         </Modal>
+
+        <ConfirmDialog
+          isOpen={completeConfirmOpen}
+          onClose={() => { setCompleteConfirmOpen(false); setStepToComplete(null) }}
+          onConfirm={confirmMarkComplete}
+          title="Mark Step as Complete?"
+          message="Are you sure you want to mark this visa step as completed? You can edit it later if needed."
+          confirmLabel="Mark Complete"
+          variant="warning"
+        />
 
         <ConfirmDialog
           isOpen={confirmOpen}
