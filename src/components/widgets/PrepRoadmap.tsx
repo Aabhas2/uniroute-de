@@ -80,12 +80,13 @@ export function PrepRoadmap({ tasks }: PrepRoadmapProps) {
         )
       )
       const completed = related.filter(t => t.status === 'Completed').length
+      const inProgress = related.filter(t => t.status === 'In Progress').length
       const total = related.length
       const pct = total > 0 ? Math.round((completed / total) * 100) : 0
       const status: 'done' | 'active' | 'pending' =
-        pct === 100 && total > 0 ? 'done' : pct > 0 ? 'active' : 'pending'
+        pct === 100 && total > 0 ? 'done' : (completed > 0 || inProgress > 0) ? 'active' : 'pending'
 
-      return { ...phase, completed, total, pct, status }
+      return { ...phase, completed, inProgress, total, pct, status }
     })
   }, [tasks])
 
@@ -128,7 +129,9 @@ export function PrepRoadmap({ tasks }: PrepRoadmapProps) {
                     {phase.title}
                   </span>
                   {phase.status === 'active' && (
-                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-primary/15 text-primary font-medium">Active</span>
+                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-primary/15 text-primary font-medium">
+                      {phase.inProgress > 0 ? `${phase.inProgress} In Progress` : 'Active'}
+                    </span>
                   )}
                 </div>
                 {phase.total > 0 && (
@@ -139,11 +142,11 @@ export function PrepRoadmap({ tasks }: PrepRoadmapProps) {
                           'h-full rounded-full transition-all',
                           phase.status === 'done' ? 'bg-success' : 'bg-primary'
                         )}
-                        style={{ width: `${phase.pct}%` }}
+                        style={{ width: `${Math.max(phase.pct, phase.inProgress > 0 ? 35 : 0)}%` }}
                       />
                     </div>
-                    <span className="text-xs text-muted-foreground shrink-0">
-                      {phase.completed}/{phase.total}
+                    <span className="text-xs text-muted-foreground shrink-0 font-medium">
+                      {phase.completed}/{phase.total} done
                     </span>
                   </div>
                 )}

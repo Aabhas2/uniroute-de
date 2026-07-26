@@ -112,8 +112,15 @@ export default function Dashboard() {
     const totalBudget = financeItems.reduce((s, i) => s + convertAmt(i.estimatedAmount), 0)
     const totalPaid = financeItems.filter(i => i.paid).reduce((s, i) => s + convertAmt(i.actualAmount ?? i.estimatedAmount), 0)
     const appInProgress = universities.filter(u => u.status === 'Applied' || u.status === 'Accepted').length
-    return { total, done, inProgress, pct: total > 0 ? Math.round((done / total) * 100) : 0, totalBudget, totalPaid, appInProgress }
-  }, [tasks, financeItems, universities, settings.currency])
+    
+    const now = new Date()
+    const upcomingCount =
+      tasks.filter(t => t.dueDate && t.status !== 'Completed' && new Date(t.dueDate) >= now).length +
+      universities.filter(u => u.applicationDeadline && u.status !== 'Rejected' && new Date(u.applicationDeadline) >= now).length +
+      exams.filter(e => e.plannedDate && e.status !== 'Completed' && new Date(e.plannedDate) >= now).length
+
+    return { total, done, inProgress, pct: total > 0 ? Math.round((done / total) * 100) : 0, totalBudget, totalPaid, appInProgress, upcomingCount }
+  }, [tasks, financeItems, universities, exams, settings.currency])
 
   // ─── Handlers ─────────────────────────────────────────────────────────────
   const handleAddTask = useCallback(async (data: Omit<Task, 'id' | 'createdAt'>) => {
@@ -195,8 +202,6 @@ export default function Dashboard() {
 
   if (loading) return <Layout><SkeletonPage /></Layout>
 
-  const country = settings.personalDetails.targetCountry || 'Germany'
-
   return (
     <Layout>
       <div className="space-y-6 fade-in">
@@ -228,7 +233,16 @@ export default function Dashboard() {
             { label: 'Universities', value: universities.length, icon: BookOpen, color: 'text-info', bg: 'bg-info/10', sub: `${stats.appInProgress} active` },
             { label: 'Tasks Done', value: `${stats.done}/${stats.total}`, icon: CheckCircle, color: 'text-success', bg: 'bg-success/10', sub: `${stats.inProgress} in progress` },
             { label: 'Exams', value: exams.length, icon: FileText, color: 'text-primary', bg: 'bg-primary/10', sub: `${exams.filter(e=>e.status==='Completed').length} completed` },
-            { label: 'Budget Paid', value: null, icon: DollarSign, color: 'text-accent', bg: 'bg-accent/10', sub: `of budget`, isCurrency: true, amount: stats.totalPaid },
+            { 
+              label: 'Budget Paid', 
+              value: null, 
+              icon: DollarSign, 
+              color: 'text-accent', 
+              bg: 'bg-accent/10', 
+              sub: stats.totalBudget > 0 ? `of total budget` : 'total budget', 
+              isCurrency: true, 
+              amount: stats.totalPaid 
+            },
           ].map(({ label, value, icon: Icon, color, bg, sub, isCurrency, amount }) => (
             <Card key={label}>
               <CardContent className="flex items-center justify-between p-5">
@@ -270,7 +284,11 @@ export default function Dashboard() {
           <Card className="xl:col-span-3">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Upcoming Deadlines</CardTitle>
-              <span className="text-xs text-muted-foreground">Next 8</span>
+              {stats.upcomingCount > 0 && (
+                <span className="text-xs text-muted-foreground font-medium">
+                  Showing {Math.min(stats.upcomingCount, 8)}
+                </span>
+              )}
             </CardHeader>
             <CardContent>
               <DeadlineTimeline
