@@ -112,7 +112,7 @@ export function LanguageTracker() {
             <div className="absolute top-6 left-2 right-2 h-0.5 bg-muted -z-0"></div>
             <div 
               className="absolute top-6 left-2 h-0.5 bg-primary -z-0 transition-all duration-300" 
-              style={{ width: `calc(${(currentIndex / (germanLevels.length - 2)) * 100}% - 4px)` }}
+              style={{ width: `calc((100% - 16px) * ${Math.max(0, currentIndex - 1) / (germanLevels.length - 2)})` }}
             ></div>
           </div>
 

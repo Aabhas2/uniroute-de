@@ -197,11 +197,8 @@ export default function VisaPage() {
       s.title.toLowerCase().includes('checklist')
     )
     if (alreadyExists) {
-      alert('A document checklist step already exists. Edit it in the list above.')
       return
     }
-
-    const config = countriesConfig['Germany']
     
     const checklistStep: Omit<VisaStep, 'id'> = {
       title: 'German Student Visa Document Checklist',
