@@ -125,12 +125,6 @@ export default function SettingsPage() {
 
   const handlePersonalChange = async (field: string, value: string) => {
     set('personalDetails', field, value)
-    if (field === 'targetCountry') {
-      const config = countriesConfig[value]
-      if (config) {
-        setConfirmState({ isOpen: true, type: 'import', payload: value, isLoading: false })
-      }
-    }
   }
 
   const handleUpdateRates = async () => {
@@ -240,21 +234,6 @@ export default function SettingsPage() {
           <input id="s-email" type="email" value={settings.personalDetails.email}
             onChange={e => handlePersonalChange('email', e.target.value)}
             placeholder="you@example.com" className="input-field" />
-        </div>
-
-        <div className="input-group">
-          <label className="input-label" htmlFor="s-country">Target Country</label>
-          <select id="s-country" value={settings.personalDetails.targetCountry}
-            onChange={e => handlePersonalChange('targetCountry', e.target.value)}
-            className="input-field">
-            <option value="Germany">🇩🇪 Germany</option>
-            <option value="Canada">🇨🇦 Canada</option>
-            <option value="Netherlands">🇳🇱 Netherlands</option>
-            <option value="Switzerland">🇨🇭 Switzerland</option>
-            <option value="Austria">🇦🇹 Austria</option>
-            <option value="UK">🇬🇧 United Kingdom</option>
-            <option value="Australia">🇦🇺 Australia</option>
-          </select>
         </div>
 
         <div className="input-group">

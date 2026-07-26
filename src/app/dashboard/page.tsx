@@ -216,7 +216,7 @@ export default function Dashboard() {
                 : 'Welcome to UniRoute DE! 👋'}
             </h1>
             <p className="text-muted-foreground text-sm">
-              {settings.personalDetails.targetCountry || 'Germany'} study preparation
+              Germany study preparation
               &nbsp;·&nbsp;{stats.pct}% complete
               &nbsp;·&nbsp;{stats.done} of {stats.total} tasks done
             </p>

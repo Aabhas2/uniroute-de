@@ -314,7 +314,6 @@ export default function FinancePage() {
 
         <BlockedAccountTracker 
           savingsGoals={savingsGoals} 
-          targetCountry={settings.personalDetails.targetCountry || 'Germany'} 
         />
 
         {/* ── Stat cards ─────────────────────────────────────── */}

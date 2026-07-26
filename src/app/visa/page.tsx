@@ -187,14 +187,7 @@ export default function VisaPage() {
   }
 
   const handleBookAppointment = () => {
-    const country = settings.personalDetails.targetCountry || 'Germany'
-    if (country === 'Germany') {
-      window.open('https://service2.diplo.de/rktermin/extern/choose_categoryList.do?locationCode=indi&realmId=108&categoryId=373', '_blank', 'noopener,noreferrer')
-    } else if (country === 'Canada') {
-      window.open('https://www.canada.ca/en/immigration-refugees-citizenship/services/biometrics.html', '_blank', 'noopener,noreferrer')
-    } else {
-      window.open('https://www.vfsglobal.com', '_blank', 'noopener,noreferrer')
-    }
+    window.open('https://service2.diplo.de/rktermin/extern/choose_categoryList.do?locationCode=indi&realmId=108&categoryId=373', '_blank', 'noopener,noreferrer')
   }
 
   const handleDocumentChecklist = async () => {
@@ -208,26 +201,21 @@ export default function VisaPage() {
       return
     }
 
-    const country = settings.personalDetails.targetCountry || 'Germany'
-    const config = countriesConfig[country]
+    const config = countriesConfig['Germany']
     
     const checklistStep: Omit<VisaStep, 'id'> = {
-      title: `${country} Document Checklist`,
-      description: `Complete document checklist for ${country} student visa. Required proof: ${config?.visaAmount || '11904'} ${config?.visaCurrency || 'EUR'} via ${config?.visaType || 'Blocked Account'}.`,
+      title: 'German Student Visa Document Checklist',
+      description: `Complete document checklist for German student visa (Type D). Required proof: €11,904/year via Blocked Account (Sperrkonto).`,
       status: 'Pending',
-      documents: config ? [
+      documents: [
         'Valid passport (6+ months validity)',
         'University admission letter',
-        `Financial Proof (${config.visaAmount} ${config.visaCurrency} via ${config.visaType})`,
-        'Health insurance coverage',
-        'Academic transcripts and certificates',
-        ...config.mandatedExams.map(exam => `${exam} documentation`),
-        'Biometric photos'
-      ] : [
-        'Valid passport',
-        'University admission letter',
-        'Proof of financial resources',
-        'Academic transcripts'
+        'Financial Proof (€11,904 via Blocked Account / Sperrkonto)',
+        'APS Certificate',
+        'Health insurance coverage (TK / Mawista)',
+        'Academic transcripts and degree certificates',
+        'Motivation Letter / SOP',
+        'Biometric photos (German spec 35x45mm)'
       ]
     }
 
@@ -248,14 +236,7 @@ export default function VisaPage() {
   }
 
   const handleTrackApplication = () => {
-    const country = settings.personalDetails.targetCountry || 'Germany'
-    if (country === 'Germany') {
-      window.open('https://visa.vfsglobal.com/ind/en/deu/track-application', '_blank', 'noopener,noreferrer')
-    } else if (country === 'Canada') {
-      window.open('https://www.canada.ca/en/immigration-refugees-citizenship/services/application/check-status.html', '_blank', 'noopener,noreferrer')
-    } else {
-      window.open('https://visa.vfsglobal.com', '_blank', 'noopener,noreferrer')
-    }
+    window.open('https://visa.vfsglobal.com/ind/en/deu/track-application', '_blank', 'noopener,noreferrer')
   }
 
   const VisaStepCard = ({ step, index }: { step: VisaStep; index: number }) => (

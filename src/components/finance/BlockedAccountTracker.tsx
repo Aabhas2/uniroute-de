@@ -10,14 +10,14 @@ import { convertCurrency } from '@/lib/utils'
 
 interface BlockedAccountTrackerProps {
   savingsGoals: SavingsGoal[]
-  targetCountry: string
+  targetCountry?: string
 }
 
-export function BlockedAccountTracker({ savingsGoals, targetCountry }: BlockedAccountTrackerProps) {
+export function BlockedAccountTracker({ savingsGoals }: BlockedAccountTrackerProps) {
   const { settings } = useTheme()
   const primaryCurrency = settings.currency.primary || 'EUR'
   const rates = settings.currency.exchangeRates || { EUR: 1, USD: 1.14, INR: 109.88 }
-  const config = countriesConfig[targetCountry]
+  const config = countriesConfig['Germany']
   
   const blockedAccountSavings = useMemo(() => {
     return savingsGoals.filter(goal => {
@@ -71,7 +71,7 @@ export function BlockedAccountTracker({ savingsGoals, targetCountry }: BlockedAc
           )}
         </div>
         <p className="text-sm text-muted-foreground mt-1">
-          Based on your target country ({targetCountry}), you need to prove financial resources for your student visa.
+          German student visa requirement: prove €11,904/year (€992/month) in a German Blocked Account (Sperrkonto).
         </p>
       </CardHeader>
       

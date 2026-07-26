@@ -6,9 +6,6 @@ import { FileText, CheckCircle, GraduationCap, AlertCircle, RefreshCw } from 'lu
 
 export function CertificateTracker() {
   const { settings, updateSettings } = useTheme()
-  const targetCountry = settings.personalDetails.targetCountry
-
-  if (targetCountry !== 'Germany') return null
 
   const certStatus = settings.certificateStatus || {
     aps: 'Not Started',
