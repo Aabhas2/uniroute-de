@@ -56,7 +56,6 @@ export function DeadlineTimeline({ tasks, universities, exams, visaSteps, schola
     })
 
     return all
-      .filter(item => item.date >= now)
       .sort((a, b) => a.date.getTime() - b.date.getTime())
       .slice(0, limit)
   }, [tasks, universities, exams, visaSteps, scholarships, limit])
@@ -76,19 +75,19 @@ export function DeadlineTimeline({ tasks, universities, exams, visaSteps, schola
         const cfg = typeConfig[item.type]
         const Icon = cfg.icon
         const days = daysUntil(item.date)
+        const isOverdue = days < 0
         const isUrgent = days <= 14
-        const isSoon = days <= 30
 
         return (
           <div
             key={`${item.type}-${item.id}`}
             className={cn(
               'flex items-center gap-3 p-3 rounded-xl border transition-colors',
-              isUrgent ? 'bg-danger/5 border-danger/20' : `${cfg.bg} ${cfg.border}`
+              isOverdue ? 'bg-danger/10 border-danger/30' : isUrgent ? 'bg-danger/5 border-danger/20' : `${cfg.bg} ${cfg.border}`
             )}
           >
             <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center shrink-0', cfg.bg)}>
-              {isUrgent
+              {isOverdue || isUrgent
                 ? <AlertTriangle className="h-4 w-4 text-danger" />
                 : <Icon className={cn('h-4 w-4', cfg.color)} />}
             </div>
@@ -98,14 +97,14 @@ export function DeadlineTimeline({ tasks, universities, exams, visaSteps, schola
                 {cfg.label} · {item.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
               </p>
             </div>
-            <span className={cn(
-              'text-xs font-semibold px-2 py-1 rounded-lg shrink-0',
-              isUrgent ? 'bg-danger/15 text-danger' :
-                isSoon ? 'bg-warning/15 text-warning' :
-                  'bg-muted text-muted-foreground'
-            )}>
-              {days === 0 ? 'Today' : days === 1 ? '1 day' : `${days}d`}
-            </span>
+            <div className="text-right shrink-0">
+              <span className={cn(
+                'text-xs font-semibold px-2 py-0.5 rounded-full',
+                isOverdue ? 'bg-danger/20 text-danger font-bold' : isUrgent ? 'bg-warning/20 text-warning' : 'bg-muted text-muted-foreground'
+              )}>
+                {isOverdue ? 'Overdue' : days === 0 ? 'Today' : `${days}d`}
+              </span>
+            </div>
           </div>
         )
       })}

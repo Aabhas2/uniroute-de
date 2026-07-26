@@ -1,7 +1,33 @@
 // Helper: returns a Date N days from now
 const daysFromNow = (n: number) => new Date(Date.now() + n * 24 * 60 * 60 * 1000)
 
-import { University, Exam, Scholarship, FinanceItem, SavingsGoal, VisaStep, Task, Note } from '@/types'
+import { University, Exam, Scholarship, FinanceItem, SavingsGoal, VisaStep, Task, Note, HousingApplication } from '@/types'
+
+export const mockHousing: HousingApplication[] = [
+  {
+    id: '1',
+    title: 'Studentenwerk Munich Dormitory',
+    type: 'Dormitory',
+    city: 'Munich',
+    rent: 350,
+    currency: 'EUR',
+    status: 'Applied',
+    website: 'https://www.studentenwerk-muenchen.de/en/accommodation/',
+    notes: 'Waiting list is 2-3 semesters long.'
+  },
+  {
+    id: '2',
+    title: 'WG in Maxvorstadt',
+    type: 'WG',
+    city: 'Munich',
+    rent: 650,
+    currency: 'EUR',
+    status: 'Interview/Viewing',
+    moveInDate: daysFromNow(60),
+    website: 'https://www.wg-gesucht.de/',
+    notes: 'Viewing scheduled for Friday.'
+  }
+]
 
 export const mockUniversities: University[] = [
   {
@@ -193,60 +219,7 @@ export const mockVisaSteps: VisaStep[] = [
   }
 ]
 
-// Returns the next upcoming annual occurrence of month/day (e.g. next Nov 15)
-const nextAnnualDeadline = (month: number, day: number): Date => {
-  const now = new Date()
-  const thisYear = new Date(now.getFullYear(), month, day)
-  // If it hasn't passed yet this year, use this year; otherwise use next year
-  return thisYear > now ? thisYear : new Date(now.getFullYear() + 1, month, day)
-}
 
-export const germanScholarshipsDB: Scholarship[] = [
-  {
-    id: 'db-daad-1',
-    name: 'DAAD Study Scholarships — Master Studies for All Academic Disciplines',
-    amount: 934,
-    currency: 'EUR',
-    eligibility: 'Excellent academic record, bachelor degree (max 6 years old)',
-    deadline: nextAnnualDeadline(10, 15), // Nov 15 each year
-    status: 'To Apply',
-    website: 'https://www2.daad.de/deutschland/stipendium/datenbank/en/21148-scholarship-database/',
-    requirements: ['SOP (Letter of Motivation)', 'LOR from University Professor', 'Language Certificate']
-  },
-  {
-    id: 'db-deutschlandstipendium-1',
-    name: 'Deutschlandstipendium',
-    amount: 300,
-    currency: 'EUR',
-    eligibility: 'Enrolled students at a German university with outstanding academic achievements',
-    deadline: nextAnnualDeadline(5, 30), // ~Jun 30 each year (varies per university)
-    status: 'To Apply',
-    website: 'https://www.deutschlandstipendium.de/deutschlandstipendium/de/services/english/the-deutschlandstipendium-making-a-great-idea-happen.html',
-    requirements: ['Enrolled at participating university', 'Transcript of Records', 'CV']
-  },
-  {
-    id: 'db-boell-1',
-    name: 'Heinrich Böll Foundation Scholarships',
-    amount: 934,
-    currency: 'EUR',
-    eligibility: 'All subjects, must have excellent German language skills (B2/C1)',
-    deadline: nextAnnualDeadline(2, 1), // Mar 1 each year
-    status: 'To Apply',
-    website: 'https://www.boell.de/en/scholarships',
-    requirements: ['Proof of German proficiency (B2+)', 'Excellent academic record', 'Social/political engagement']
-  },
-  {
-    id: 'db-ebert-1',
-    name: 'Friedrich Ebert Foundation',
-    amount: 934,
-    currency: 'EUR',
-    eligibility: 'International students studying in Germany with social/political involvement',
-    deadline: nextAnnualDeadline(4, 30), // ~May 30 each year
-    status: 'To Apply',
-    website: 'https://www.fes.de/studienfoerderung/bewerbung',
-    requirements: ['Social/Political engagement', 'German C1 level', 'Reference from university teacher']
-  }
-]
 
 
 export const mockTasks: Task[] = [

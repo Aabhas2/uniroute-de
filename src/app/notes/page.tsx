@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Layout } from '@/components/layout/Layout'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -141,8 +141,8 @@ export default function NotesPage() {
     setEditingNote(undefined)
   }
 
-  // Simple categories calculation
-  const categories = ['all', ...Array.from(new Set(notes.map(note => note.category).filter(Boolean)))]
+  // Memoized categories calculation from actual notes list
+  const categories = useMemo(() => ['all', ...Array.from(new Set(notes.map(note => note.category).filter(Boolean)))], [notes])
   
   // Simple filtered notes
   const filteredNotes = notes.filter(note => {
@@ -247,7 +247,7 @@ export default function NotesPage() {
                 />
               </div>
               <div className="flex flex-wrap gap-2">
-                {categories.map((category) => (
+                {categories.map((category: string) => (
                   <Button
                     key={category}
                     variant={selectedCategory === category ? 'primary' : 'outline'}

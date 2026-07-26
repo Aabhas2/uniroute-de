@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { FinanceItem } from '@/types'
 
+import { useTheme } from '@/contexts/ThemeContext'
+
 interface ExpenseFormProps {
   expense?: FinanceItem
   onSubmit: (data: Omit<FinanceItem, 'id'>) => void
@@ -13,11 +15,12 @@ interface ExpenseFormProps {
 const CATEGORIES: FinanceItem['category'][] = ['Application', 'Travel', 'Tuition', 'Living', 'Other']
 
 export function ExpenseForm({ expense, onSubmit, onCancel }: ExpenseFormProps) {
+  const { settings } = useTheme()
   const [description, setDescription] = useState(expense?.description ?? '')
   const [estimatedAmount, setEstimatedAmount] = useState(expense?.estimatedAmount?.toString() ?? '')
   const [actualAmount, setActualAmount] = useState(expense?.actualAmount?.toString() ?? '')
   const [category, setCategory] = useState<FinanceItem['category']>(expense?.category ?? 'Other')
-  const [currency, setCurrency] = useState(expense?.currency ?? 'EUR')
+  const [currency, setCurrency] = useState(expense?.currency ?? settings.currency.primary ?? 'EUR')
   const [paid, setPaid] = useState(expense?.paid ?? false)
   const [errors, setErrors] = useState<Record<string, string>>({})
 

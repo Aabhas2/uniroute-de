@@ -82,7 +82,7 @@ export function useDeadlines(daysThreshold: number = 30) {
       const aggregated: DeadlineItem[] = []
 
       tasks.forEach(t => {
-        if (t.status !== 'Completed' && t.dueDate && t.dueDate <= thresholdDate && t.dueDate >= now) {
+        if (t.status !== 'Completed' && t.dueDate && t.dueDate <= thresholdDate) {
           aggregated.push({
             id: `task-${t.id}`,
             title: t.title,
@@ -96,7 +96,7 @@ export function useDeadlines(daysThreshold: number = 30) {
       })
 
       unis.forEach(u => {
-        if (u.status !== 'Accepted' && u.status !== 'Rejected' && u.applicationDeadline && u.applicationDeadline <= thresholdDate && u.applicationDeadline >= now) {
+        if (u.status !== 'Accepted' && u.status !== 'Rejected' && u.applicationDeadline && u.applicationDeadline <= thresholdDate) {
           aggregated.push({
             id: `uni-${u.id}`,
             title: `${u.name} App`,
@@ -110,7 +110,7 @@ export function useDeadlines(daysThreshold: number = 30) {
       })
 
       exams.forEach(e => {
-        if (e.status !== 'Completed' && e.plannedDate && e.plannedDate <= thresholdDate && e.plannedDate >= now) {
+        if (e.status !== 'Completed' && e.plannedDate && e.plannedDate <= thresholdDate) {
           aggregated.push({
             id: `exam-${e.id}`,
             title: e.name,
@@ -124,7 +124,7 @@ export function useDeadlines(daysThreshold: number = 30) {
       })
 
       scholarships.forEach(s => {
-        if (s.status !== 'Accepted' && s.status !== 'Rejected' && s.deadline && s.deadline <= thresholdDate && s.deadline >= now) {
+        if (s.status !== 'Accepted' && s.status !== 'Rejected' && s.deadline && s.deadline <= thresholdDate) {
           aggregated.push({
             id: `schol-${s.id}`,
             title: s.name,
@@ -138,7 +138,7 @@ export function useDeadlines(daysThreshold: number = 30) {
       })
 
       visaSteps.forEach(v => {
-        if (v.status !== 'Completed' && v.dueDate && v.dueDate <= thresholdDate && v.dueDate >= now) {
+        if (v.status !== 'Completed' && v.dueDate && v.dueDate <= thresholdDate) {
           aggregated.push({
             id: `visa-${v.id}`,
             title: v.title,
@@ -160,7 +160,13 @@ export function useDeadlines(daysThreshold: number = 30) {
 
     fetchAllData()
 
-    return () => { isMounted = false }
+    const handleDataUpdate = () => fetchAllData()
+    window.addEventListener('app-data-updated', handleDataUpdate)
+
+    return () => {
+      isMounted = false
+      window.removeEventListener('app-data-updated', handleDataUpdate)
+    }
   }, [user, daysThreshold])
 
   return { deadlines, loading }

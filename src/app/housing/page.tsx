@@ -16,31 +16,7 @@ import { useIsClient } from '@/hooks/useIsClient'
 import { Loading } from '@/components/ui/Loading'
 import { dbHousing } from '@/lib/db'
 
-const MOCK_HOUSING: HousingApplication[] = [
-  {
-    id: '1',
-    title: 'Studentenwerk Munich Dormitory',
-    type: 'Dormitory',
-    city: 'Munich',
-    rent: 350,
-    currency: 'EUR',
-    status: 'Applied',
-    website: 'https://www.studentenwerk-muenchen.de/en/accommodation/',
-    notes: 'Waiting list is 2-3 semesters long.'
-  },
-  {
-    id: '2',
-    title: 'WG in Maxvorstadt',
-    type: 'WG',
-    city: 'Munich',
-    rent: 650,
-    currency: 'EUR',
-    status: 'Interview/Viewing',
-    moveInDate: new Date(new Date().getFullYear(), 9, 1), // Oct 1
-    website: 'https://www.wg-gesucht.de/',
-    notes: 'Viewing scheduled for Friday.'
-  }
-]
+import { mockHousing } from '@/data/mockData'
 
 export default function HousingPage() {
   const isClient = useIsClient()
@@ -71,11 +47,11 @@ export default function HousingPage() {
               moveInDate: h.moveInDate ? new Date(h.moveInDate) : undefined
             })))
           } else {
-            setApplications(MOCK_HOUSING)
+            setApplications(mockHousing)
           }
         } catch (error) {
           console.error('Error loading housing:', error)
-          setApplications(MOCK_HOUSING)
+          setApplications(mockHousing)
         }
       }
     }
