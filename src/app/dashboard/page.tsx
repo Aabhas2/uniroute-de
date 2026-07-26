@@ -53,16 +53,14 @@ export default function Dashboard() {
           dbExams.fetch(user.uid),
           dbFinance.fetch(user.uid),
         ])
-        setTasks(cloudTasks.length > 0 ? cloudTasks : mockTasks)
-        setUniversities(cloudUnis.length > 0 ? cloudUnis : mockUniversities)
-        setExams(cloudExams.length > 0 ? cloudExams : mockExams)
-        setFinanceItems(cloudFinance.length > 0 ? cloudFinance : mockFinanceItems)
+        // For signed-in users, always use their own cloud data (even if empty)
+        setTasks(cloudTasks)
+        setUniversities(cloudUnis)
+        setExams(cloudExams)
+        setFinanceItems(cloudFinance)
       } catch (error) {
         console.warn('Dashboard cloud fetch error fallback:', error)
-        setTasks(mockTasks)
-        setUniversities(mockUniversities)
-        setExams(mockExams)
-        setFinanceItems(mockFinanceItems)
+        setTasks([]); setUniversities([]); setExams([]); setFinanceItems([])
       }
     } else {
       try {
@@ -286,7 +284,7 @@ export default function Dashboard() {
               <CardTitle>Upcoming Deadlines</CardTitle>
               {stats.upcomingCount > 0 && (
                 <span className="text-xs text-muted-foreground font-medium">
-                  Showing {Math.min(stats.upcomingCount, 8)}
+                  Next {Math.min(stats.upcomingCount, 8)}
                 </span>
               )}
             </CardHeader>

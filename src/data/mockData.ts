@@ -1,3 +1,6 @@
+// Helper: returns a Date N days from now
+const daysFromNow = (n: number) => new Date(Date.now() + n * 24 * 60 * 60 * 1000)
+
 import { University, Exam, Scholarship, FinanceItem, SavingsGoal, VisaStep, Task, Note } from '@/types'
 
 export const mockUniversities: University[] = [
@@ -7,7 +10,7 @@ export const mockUniversities: University[] = [
     location: 'Munich, Bavaria',
     course: 'Computer Science (M.Sc.)',
     language: 'English',
-    applicationDeadline: new Date('2024-07-15'),
+    applicationDeadline: daysFromNow(75),
     status: 'Applied',
     website: 'https://www.tum.de',
     notes: 'Strong in AI and Machine Learning'
@@ -18,7 +21,7 @@ export const mockUniversities: University[] = [
     location: 'Aachen, North Rhine-Westphalia',
     course: 'Data Science (M.Sc.)',
     language: 'English',
-    applicationDeadline: new Date('2024-08-01'),
+    applicationDeadline: daysFromNow(105),
     status: 'Interested',
     website: 'https://www.rwth-aachen.de'
   },
@@ -28,7 +31,7 @@ export const mockUniversities: University[] = [
     location: 'Stuttgart, Baden-Württemberg',
     course: 'Information Technology (M.Sc.)',
     language: 'English',
-    applicationDeadline: new Date('2024-06-30'),
+    applicationDeadline: daysFromNow(55),
     status: 'Applied',
     website: 'https://www.uni-stuttgart.de'
   }
@@ -40,7 +43,7 @@ export const mockExams: Exam[] = [
     name: 'IELTS Academic',
     registrationLink: 'https://www.ielts.org',
     fee: 250,
-    plannedDate: new Date('2024-05-15'),
+    plannedDate: daysFromNow(45),
     status: 'Registered',
     preparationResources: ['Cambridge IELTS Books', 'Online Practice Tests', 'Speaking Partner']
   },
@@ -49,7 +52,7 @@ export const mockExams: Exam[] = [
     name: 'TestAS',
     registrationLink: 'https://www.testas.de',
     fee: 200,
-    plannedDate: new Date('2024-06-01'),
+    plannedDate: daysFromNow(80),
     status: 'To Register',
     preparationResources: ['TestAS Preparation Course', 'Sample Tests']
   },
@@ -58,7 +61,7 @@ export const mockExams: Exam[] = [
     name: 'APS Certificate',
     fee: 175,
     status: 'Completed',
-    actualDate: new Date('2024-03-20'),
+    actualDate: daysFromNow(-30),
     score: 'Passed',
     preparationResources: ['Academic Transcript Review', 'Interview Preparation']
   }
@@ -71,7 +74,7 @@ export const mockScholarships: Scholarship[] = [
     amount: 861,
     currency: 'EUR',
     eligibility: 'Master\'s students from developing countries',
-    deadline: new Date('2024-09-30'),
+    deadline: daysFromNow(120),
     status: 'To Apply',
     website: 'https://www.daad.de',
     requirements: ['Academic Excellence', 'Language Proficiency', 'Motivation Letter']
@@ -82,7 +85,7 @@ export const mockScholarships: Scholarship[] = [
     amount: 300,
     currency: 'EUR',
     eligibility: 'High-achieving students',
-    deadline: new Date('2024-07-31'),
+    deadline: daysFromNow(90),
     status: 'Applied',
     requirements: ['Good Grades', 'Social Engagement', 'Financial Need']
   }
@@ -131,9 +134,9 @@ export const mockSavingsGoals: SavingsGoal[] = [
     targetAmount: 15000,
     currentAmount: 8500,
     currency: 'EUR',
-    deadline: new Date('2024-08-01'),
+    deadline: daysFromNow(120),
     description: 'Total fund needed for first year in Germany',
-    createdAt: new Date('2024-01-01')
+    createdAt: daysFromNow(-90)
   },
   {
     id: '2',
@@ -141,9 +144,9 @@ export const mockSavingsGoals: SavingsGoal[] = [
     targetAmount: 3000,
     currentAmount: 1200,
     currency: 'EUR',
-    deadline: new Date('2024-07-01'),
+    deadline: daysFromNow(90),
     description: 'Emergency backup fund for unexpected expenses',
-    createdAt: new Date('2024-02-01')
+    createdAt: daysFromNow(-60)
   },
   {
     id: '3',
@@ -152,7 +155,7 @@ export const mockSavingsGoals: SavingsGoal[] = [
     currentAmount: 750,
     currency: 'EUR',
     description: 'Flight tickets, initial setup, and moving expenses',
-    createdAt: new Date('2024-03-01')
+    createdAt: daysFromNow(-30)
   }
 ]
 
@@ -162,7 +165,7 @@ export const mockVisaSteps: VisaStep[] = [
     title: 'Gather Required Documents',
     description: 'Collect all necessary documents for visa application',
     status: 'In Progress',
-    dueDate: new Date('2024-06-15'),
+    dueDate: daysFromNow(50),
     documents: ['Passport', 'University Admission Letter', 'Financial Proof', 'Health Insurance']
   },
   {
@@ -170,7 +173,7 @@ export const mockVisaSteps: VisaStep[] = [
     title: 'Book Visa Appointment',
     description: 'Schedule appointment at German consulate',
     status: 'Pending',
-    dueDate: new Date('2024-07-01'),
+    dueDate: daysFromNow(70),
     documents: ['Completed Application Form']
   },
   {
@@ -241,32 +244,42 @@ export const mockTasks: Task[] = [
   {
     id: '1',
     title: 'Complete IELTS Registration',
-    description: 'Register for IELTS exam and pay fees',
+    description: 'Register for IELTS exam and pay the exam fees',
     category: 'Exams',
     priority: 'High',
-    status: 'To Do',
-    dueDate: new Date('2024-05-01'),
-    createdAt: new Date('2024-04-15')
+    status: 'In Progress',
+    dueDate: daysFromNow(20),
+    createdAt: daysFromNow(-10)
   },
   {
     id: '2',
-    title: 'Write Motivation Letter for TUM',
-    description: 'Draft and finalize motivation letter for TUM application',
+    title: 'Write SOP / Motivation Letter for TUM',
+    description: 'Draft and finalize the Statement of Purpose for TUM application',
     category: 'Applications',
     priority: 'High',
-    status: 'In Progress',
-    dueDate: new Date('2024-05-20'),
-    createdAt: new Date('2024-04-10')
+    status: 'To Do',
+    dueDate: daysFromNow(40),
+    createdAt: daysFromNow(-5)
   },
   {
     id: '3',
-    title: 'Research Accommodation Options',
-    description: 'Look for student housing in Munich',
+    title: 'Research Housing & Accommodation',
+    description: 'Shortlist WG rooms and Studentenwerk dormitories in Munich',
     category: 'Accommodation',
     priority: 'Medium',
     status: 'To Do',
-    dueDate: new Date('2024-06-01'),
-    createdAt: new Date('2024-04-20')
+    dueDate: daysFromNow(60),
+    createdAt: daysFromNow(-3)
+  },
+  {
+    id: '4',
+    title: 'Shortlist Universities and Programs',
+    description: 'Research and finalize the list of target German universities',
+    category: 'Research',
+    priority: 'High',
+    status: 'Completed',
+    dueDate: daysFromNow(-15),
+    createdAt: daysFromNow(-30)
   }
 ]
 
@@ -277,8 +290,8 @@ export const mockNotes: Note[] = [
     content: 'Focus on B2 level for most universities. Use Duolingo, Babbel, and practice speaking with native speakers. Grammar is crucial for academic writing.',
     tags: ['language', 'german', 'study-tips'],
     category: 'Language',
-    createdAt: new Date('2024-04-01'),
-    updatedAt: new Date('2024-04-01')
+    createdAt: daysFromNow(-60),
+    updatedAt: daysFromNow(-60)
   },
   {
     id: '2',
@@ -286,8 +299,8 @@ export const mockNotes: Note[] = [
     content: 'Average monthly expenses: Rent (400-800€), Food (200-300€), Transport (70€), Miscellaneous (150€). Total: ~1000€/month',
     tags: ['finances', 'munich', 'cost-of-living'],
     category: 'Finance',
-    createdAt: new Date('2024-03-25'),
-    updatedAt: new Date('2024-04-05')
+    createdAt: daysFromNow(-45),
+    updatedAt: daysFromNow(-30)
   },
   {
     id: '3',
@@ -295,7 +308,7 @@ export const mockNotes: Note[] = [
     content: 'Common questions: Why Germany? Why this university? How will you finance your studies? What are your career plans? Practice answers in both English and German.',
     tags: ['visa', 'interview', 'preparation'],
     category: 'Visa',
-    createdAt: new Date('2024-04-10'),
-    updatedAt: new Date('2024-04-10')
+    createdAt: daysFromNow(-20),
+    updatedAt: daysFromNow(-20)
   }
 ] 

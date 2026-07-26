@@ -146,28 +146,41 @@ export default function ExamsPage() {
     setEditingExam(undefined)
   }
 
-  const handleMarkComplete = async (examId: string) => {
-    const score = prompt('Enter your score/result (optional):')
-    const matched = exams.find(e => e.id === examId)
+  const [scoreModalOpen, setScoreModalOpen] = useState(false)
+  const [examToComplete, setExamToComplete] = useState<string | null>(null)
+  const [scoreInput, setScoreInput] = useState('')
+
+  const handleMarkComplete = (examId: string) => {
+    setExamToComplete(examId)
+    setScoreInput('')
+    setScoreModalOpen(true)
+  }
+
+  const confirmMarkComplete = async () => {
+    if (!examToComplete) return
+    const matched = exams.find(e => e.id === examToComplete)
     if (!matched) return
 
-    const updated: Exam = { 
-      ...matched, 
-      status: 'Completed' as Exam['status'], 
+    const updated: Exam = {
+      ...matched,
+      status: 'Completed' as Exam['status'],
       actualDate: new Date(),
-      score: score || matched.score
+      score: scoreInput.trim() || matched.score
     }
 
     if (user) {
       try {
         await dbExams.update(user.uid, updated)
-        setExams(prev => prev.map(exam => exam.id === examId ? updated : exam))
+        setExams(prev => prev.map(exam => exam.id === examToComplete ? updated : exam))
       } catch (error) {
         console.error('Error completing exam:', error)
       }
     } else {
-      setExams(prev => prev.map(exam => exam.id === examId ? updated : exam))
+      setExams(prev => prev.map(exam => exam.id === examToComplete ? updated : exam))
     }
+    setScoreModalOpen(false)
+    setExamToComplete(null)
+    setScoreInput('')
   }
 
   const handleMarkRegistered = async (examId: string) => {
@@ -423,6 +436,43 @@ export default function ExamsPage() {
             onSave={handleSaveExam}
             onCancel={handleCancelEdit}
           />
+        </Modal>
+
+        {/* Mark Complete / Score Modal */}
+        <Modal
+          isOpen={scoreModalOpen}
+          onClose={() => { setScoreModalOpen(false); setExamToComplete(null) }}
+          title="Mark Exam as Complete"
+        >
+          <div className="space-y-4 p-1">
+            <p className="text-sm text-muted-foreground">Optionally enter your score or result for this exam.</p>
+            <div>
+              <label className="text-sm font-medium text-foreground block mb-1.5">Score / Result (optional)</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                placeholder="e.g. 7.5 / Band 8 / Passed"
+                value={scoreInput}
+                onChange={e => setScoreInput(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') confirmMarkComplete() }}
+                autoFocus
+              />
+            </div>
+            <div className="flex gap-3 pt-1">
+              <button
+                onClick={() => { setScoreModalOpen(false); setExamToComplete(null) }}
+                className="flex-1 px-4 py-2 rounded-lg border border-border text-sm font-medium text-muted-foreground hover:bg-muted transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmMarkComplete}
+                className="flex-1 px-4 py-2 rounded-lg bg-success text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+              >
+                Mark as Completed
+              </button>
+            </div>
+          </div>
         </Modal>
 
         {/* Delete Confirmation */}
